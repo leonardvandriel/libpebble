@@ -13,6 +13,7 @@ import os
 import glob
 import logging
 import json
+import urllib2
 
 log = logging.getLogger()
 logging.basicConfig(format='[%(levelname)-8s] %(message)s')
@@ -504,7 +505,16 @@ class Pebble(object):
 
 		level = log_levels[level] if level in log_levels else "?"
 
-		print timestamp, level, filename, linenumber, message
+		if message.startswith('DINGDONG:'):
+			command = message[9:]
+			print '> ' + command
+			try:
+				response = urllib2.urlopen("https://development.dingdongapp.com/beta/pebble?q=" + command).read()
+			except:
+				response = "ERROR"
+			print '< ' + response
+		else:
+			print timestamp, level, filename, linenumber, message
 
 	def _appbank_status_response(self, endpoint, data):
 		apps = {}
